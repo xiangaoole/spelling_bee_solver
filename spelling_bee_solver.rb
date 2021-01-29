@@ -6,6 +6,7 @@
 ######################################################################
 
 require "ffi/aspell"
+require_relative "./configs_reader"
 
 class SpellingBeeSolver
   DEFAULT_WORD_MAX_COUNT = 6
@@ -13,8 +14,16 @@ class SpellingBeeSolver
 
   def initialize
     @speller = FFI::Aspell::Speller.new('en_US')
-    @word_max_count = DEFAULT_WORD_MAX_COUNT
-    @word_max_length = DEFAULT_WORD_MAX_LENGTH
+    begin
+      reader = ConfigsReader.new
+      @word_max_count = reader.get_word_max_count
+      @word_max_length = reader.get_word_max_length
+    rescue
+      puts "read configs error: #{$!}"
+      puts "use default configs"
+      @word_max_count = DEFAULT_WORD_MAX_COUNT
+      @word_max_length = DEFAULT_WORD_MAX_LENGTH
+    end
   end
 
   def check_spell(word)
