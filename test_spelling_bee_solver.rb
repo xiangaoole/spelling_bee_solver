@@ -28,6 +28,9 @@ class TestSpellingBee < Test::Unit::TestCase
   end
 
   def test_solve
-    assert_equal ["hist", "hits", "shit", "sits", "this", "tits"].sort, @solver.solve("t", ["h","i","s"], 4).sort
+    expect = ["hist", "hits", "shit", "this"]
+    assert_equal expect.sort, @solver.solve_pangram("t", ["h","i","s"]).sort
+    expect = ["hist", "hits", "shit", "sits", "this", "tits"] 
+    assert_equal expect.sort, @solver.solve_fixed_length("t", ["h","i","s"], 4).sort
   end
 end

@@ -6,8 +6,13 @@
 require "ffi/aspell"
 
 class SpellingBeeSolver
+  DEFAULT_WORD_MAX_COUNT = 10
+  DEFAULT_WORD_MAX_LENGTH = 6
+
   def initialize
     @speller = FFI::Aspell::Speller.new('en_US')
+    @word_max_count = DEFAULT_WORD_MAX_COUNT
+    @word_max_length = DEFAULT_WORD_MAX_LENGTH
   end
 
   def check_spell(word)
@@ -15,7 +20,7 @@ class SpellingBeeSolver
   end
 
   def arrange(letters)
-    results = []
+    arrangements = []
     table = Hash.new 
     letters.each do |letter|
       if table.has_key? letter
@@ -24,56 +29,62 @@ class SpellingBeeSolver
         table[letter] = 1
       end
     end
-    arrange_backtrack([], results, table, 0, letters.size)    
-    return results
+    arrange_backtrack([], arrangements, table, 0, letters.size)    
+    return arrangements
   end
 
   def combine(letters, n)
-    results = []
-    combine_backtrack([], results, letters, 0, n)
-    return results
+    combinations = []
+    combine_backtrack([], combinations, letters, 0, n)
+    return combinations
   end
 
   def solve_fixed_length(core, others, len)
-    results = []
+    words = []
     letters = others + [core]
-    combine(letters, len).each do |letters|
-      results.concat(arrange(letters.append(core)).filter! { |word| check_spell(word) })
+    combine(letters, len-1).each do |combination|
+      words_of_combination = arrange(combination.append(core)).filter! { |word|
+        check_spell(word)
+      }
+
+      words.concat words_of_combination
     end
-    return results
+    return words
   end
 
-  def solve_bravo(core, others)
+  def solve_pangram(core, others)
     letters = others + [core]
-    arrange(letters)
+    arrange(letters).filter! do |word|
+      check_spell word
+    end
   end
   
-  def solve(core, others, max=6)
-    results = []
-    (3...max).each do |n|
-      results.concat solve_fixed_length(core, others, n)
+  def solve(core, others)
+    words = []
+    (3...@word_max_length).each do |n|
+      words.concat solve_fixed_length(core, others, n)
     end
-    return results
+    return words
   end
 
   private
-  def combine_backtrack(combines, results, letters, index, n)
+  def combine_backtrack(combines, combinations, letters, index, n)
     if combines.size == n 
-      results << combines.sort
+      combinations << combines.sort
       return
     end
 
     for i in index..letters.size-1 do
       letter = letters[i]
       combines.push letter
-      combine_backtrack(combines, results, letters, i, n)
+      combine_backtrack(combines, combinations, letters, i, n)
       combines.pop
     end
   end
 
-  def arrange_backtrack(combines, results, table, size, n)
+  def arrange_backtrack(combines, arrangements, table, size, n)
     if size == n
-      results << combines.join
+      arrangements << combines.join 
       return
     end
       
@@ -81,7 +92,7 @@ class SpellingBeeSolver
       next if table[candidate] == 0
       combines.push candidate
       table[candidate] -= 1
-      arrange_backtrack combines, results, table, size + 1, n
+      arrange_backtrack combines, arrangements, table, size + 1, n
       combines.pop 
       table[candidate] += 1
     end
