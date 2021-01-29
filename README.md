@@ -1,6 +1,6 @@
 # Spelling Bee Solver
 
-Spelling Bee is a word puzzle, like in The New York Times.
+Spelling Bee is a word puzzle, like [the game in The New York Times](https://www.nytimes.com/puzzles/spelling-bee).
 
 > ### How to Play
 >
@@ -20,7 +20,27 @@ Spelling Bee is a word puzzle, like in The New York Times.
 
 
 
-This solver do this in 4 steps:
+## Play
+
+Requirement:
+
+1. GNU `aspell` installed: `brew install spell`
+2. `ruby` installed: `brew install ruby`
+3. ruby gem `ffi-aspell` installed: `gem install ffi-aspell`
+
+
+
+To run this ruby in CLI:
+
+```bash
+ruby index.rb
+```
+
+
+
+## Explanation
+
+This solver works in 4 steps:
 
 1. get the center letter and other letters
 2. **combine**: choose n-1 letters from all letters(letters may be used more than once but each combination is unique)
