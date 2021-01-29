@@ -1,13 +1,15 @@
 # https://www.nytimes.com/puzzles/spelling-bee
 # usage:
-#
-#
+#     SpellingBeeSolver.new.solve("t", ["h", "i", "s"])
+#     SpellingBeeSolver.new.solve_pangram("t", ["h", "i", "s"])
+#     SpellingBeeSolver.new.solve_fixed_length("t", ["h", "i", "s"], 4)
+######################################################################
 
 require "ffi/aspell"
 
 class SpellingBeeSolver
-  DEFAULT_WORD_MAX_COUNT = 10
-  DEFAULT_WORD_MAX_LENGTH = 6
+  DEFAULT_WORD_MAX_COUNT = 6
+  DEFAULT_WORD_MAX_LENGTH = 8
 
   def initialize
     @speller = FFI::Aspell::Speller.new('en_US')
@@ -44,24 +46,23 @@ class SpellingBeeSolver
     letters = others + [core]
     combine(letters, len-1).each do |combination|
       words_of_combination = arrange(combination.append(core)).filter! { |word|
-        check_spell(word)
+        check_spell word
       }
-
       words.concat words_of_combination
     end
-    return words
+    return words[0, @word_max_count]
   end
 
   def solve_pangram(core, others)
     letters = others + [core]
-    arrange(letters).filter! do |word|
+    arrange(letters).filter! { |word|
       check_spell word
-    end
+    }
   end
   
   def solve(core, others)
     words = []
-    (3...@word_max_length).each do |n|
+    (4...@word_max_length).each do |n|
       words.concat solve_fixed_length(core, others, n)
     end
     return words
