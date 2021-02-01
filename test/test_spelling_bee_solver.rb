@@ -1,4 +1,4 @@
-require_relative 'spelling_bee_solver'
+require_relative '../src/spelling_bee_solver'
 require 'test/unit'
 
 class TestSpellingBee < Test::Unit::TestCase

@@ -2,6 +2,8 @@
 
 Spelling Bee is a word puzzle, like [the game in The New York Times](https://www.nytimes.com/puzzles/spelling-bee).
 
+![demo](demo.gif)
+
 > ### How to Play
 >
 > #### Create words using letters from the hive.
