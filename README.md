@@ -26,7 +26,7 @@ Spelling Bee is a word puzzle, like [the game in The New York Times](https://www
 
 Requirement:
 
-1. GNU `aspell` installed: `brew install spell`
+1. GNU `aspell` installed: `brew install aspell`
 2. `ruby` installed: `brew install ruby`
 3. ruby gem `ffi-aspell` installed: `gem install ffi-aspell`
 
@@ -35,7 +35,7 @@ Requirement:
 To run this ruby in CLI:
 
 ```bash
-ruby index.rb
+rake
 ```
 
 
